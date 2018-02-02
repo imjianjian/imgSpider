@@ -1,0 +1,53 @@
+const htmlDownloader = require('../src/htmlDownloader');
+const urlManager = require('../src/urlManager');
+const cheerio = require('cheerio');
+
+const imageSpider = (baseUrl, url, lazyAttr, loop, callback) => {
+    
+    htmlDownloader(urlManager.urlFormat(baseUrl, url)).then(html => {
+        //cheerio加载html
+        let $ = cheerio.load(html, {
+            decodeEntities: false
+        });
+        //图片集合
+        let imgSet = new Set();
+        //获得图片的src
+        let getImgSrc = img => {
+            if (!imgSet.has($(img).attr('src'))) {
+                imgSet.add($(img).attr('src'));
+            }
+            if (lazyAttr) {
+                if (!imgSet.has($(img).attr(lazyAttr))) {
+                    imgSet.add($(img).attr(lazyAttr));
+                }
+            }
+        };
+        //将网页中的其他url添加到url管理器中
+        let loopUrl = url => {
+            urlManager.addUrl(baseUrl + url);
+        };
+        //遍历图片标签
+        $('img').each((index, item) => getImgSrc(item));
+        // console.log(imgSet.size);
+        //遍历链接
+        if (loop) {
+            $('a').each((index, item) => loopUrl($(item).attr('href')));
+            callback(imgSet);
+            let nextUrl = Array.from(urlManager.unfinished())[0];
+            console.log(nextUrl);
+            if (!urlManager.unfinished().size == 0) {
+                imageSpider(baseUrl, nextUrl, lazyAttr, loop, callback);
+            }
+        } else {
+            callback(imgSet);
+        }
+
+    }, err => {
+        let nextUrl = Array.from(urlManager.unfinished())[0];
+        console.log(nextUrl);
+        imageSpider(baseUrl, nextUrl, lazyAttr, loop, callback);
+        console.log(err);
+    });
+};
+
+module.exports = imageSpider;

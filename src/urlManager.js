@@ -7,15 +7,32 @@ const finish = url => {
 };
 
 const addUrl = url => {
-    unfinishedUrls.add(url);
+    if (!finishedUrls.has(url))
+        unfinishedUrls.add(url);
 };
 
 const selectUrl = url => {
     return unfinishedUrls.has(url);
 };
 
-module.exports={
+const unfinished = () => {
+    return unfinishedUrls;
+};
+
+const finished = () => {
+    return finished;
+};
+
+const urlFormat = (baseUrl,url) =>{
+    var urlReg = /^((http:\/\/)|(https:\/\/))?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}/;
+    return urlReg.test(url)?url:baseUrl+url;
+};
+
+module.exports = {
     finish,
     addUrl,
-    selectUrl
+    selectUrl,
+    unfinished,
+    finished,
+    urlFormat
 };

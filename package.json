@@ -22,6 +22,7 @@
   "homepage": "https://github.com/imjianjian/imgSpider#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "eslint": "^4.16.0"
+    "eslint": "^4.16.0",
+    "uuid": "^3.2.1"
   }
 }
