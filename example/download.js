@@ -6,8 +6,11 @@ var uuid = require('uuid');
 
 imgSpider('https://www.douyu.com', '/directory/all', 'data-original', true, function (imgSet) {
     console.log('下载图片数量:' + imgSet.size);
-    // fs.writeFileSync(__dirname+'/public/img.txt',imgSet);
+
     imgSet.forEach(url => {
+        /**
+         * 不同的网站，图片地址需要进行可能需要格式化，否则会下载失败
+         */
         download(url).then(data => {
             
             let imgStr = uuid.v1()+url.match(/\.(png|jpg|jpeg|gif)$/g)[0];
@@ -16,7 +19,9 @@ imgSpider('https://www.douyu.com', '/directory/all', 'data-original', true, func
             if (!fs.existsSync(downloadSrc)) {
                 fs.mkdirSync(downloadSrc);
             }
-            fs.writeFile(`${__dirname}/download/${imgStr}`,data,'binary');
+            fs.writeFile(`${__dirname}/download/${imgStr}`,data,'binary',()=>{
+                console.log('下载失败');
+            });
         }, err => {
             console.log(err);
         });
