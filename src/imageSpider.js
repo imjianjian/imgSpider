@@ -2,8 +2,8 @@ const htmlDownloader = require('../src/htmlDownloader');
 const urlManager = require('../src/urlManager');
 const cheerio = require('cheerio');
 
-const imageSpider = (baseUrl, url, lazyAttr, loop, callback) => {
-    
+const imageSpider = (options, callback) => {
+    let {baseUrl, url, lazyAttr, loop} = options;
     htmlDownloader(urlManager.urlFormat(baseUrl, url)).then(html => {
         //cheerio加载html
         let $ = cheerio.load(html, {
@@ -34,9 +34,9 @@ const imageSpider = (baseUrl, url, lazyAttr, loop, callback) => {
             $('a').each((index, item) => loopUrl($(item).attr('href')));
             callback(imgSet);
             let nextUrl = Array.from(urlManager.unfinished())[0];
-            console.log(nextUrl);
+            options.url = nextUrl;
             if (!urlManager.unfinished().size == 0) {
-                imageSpider(baseUrl, nextUrl, lazyAttr, loop, callback);
+                imageSpider(options, callback);
             }
         } else {
             callback(imgSet);
@@ -44,8 +44,8 @@ const imageSpider = (baseUrl, url, lazyAttr, loop, callback) => {
 
     }, err => {
         let nextUrl = Array.from(urlManager.unfinished())[0];
-        console.log(nextUrl);
-        imageSpider(baseUrl, nextUrl, lazyAttr, loop, callback);
+        options.url = nextUrl;
+        imageSpider(options, callback);
         console.log(err);
     });
 };
