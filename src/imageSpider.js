@@ -28,12 +28,11 @@ const imageSpider = (options, callback) => {
         };
         //遍历图片标签
         $('img').each((index, item) => getImgSrc(item));
-        // console.log(imgSet.size);
         //遍历链接
         if (loop) {
             $('a').each((index, item) => loopUrl($(item).attr('href')));
             callback(imgSet);
-            let nextUrl = Array.from(urlManager.unfinished())[0];
+            let nextUrl = urlManager.getNext();
             options.url = nextUrl;
             if (!urlManager.unfinished().size == 0) {
                 imageSpider(options, callback);
@@ -43,7 +42,7 @@ const imageSpider = (options, callback) => {
         }
 
     }, err => {
-        let nextUrl = Array.from(urlManager.unfinished())[0];
+        let nextUrl = urlManager.getNext();
         options.url = nextUrl;
         imageSpider(options, callback);
         console.log(err);

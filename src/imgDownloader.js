@@ -6,10 +6,17 @@ var path = require('path');
 
 const imgDownloader = (url, dir) => {
     let imgDownload;
-    if (/^https/.test(url))
+    var reghttps = /^https/;
+    var reghttp = /^http/;
+    
+    if (reghttps.test(url))
         imgDownload = loadByHttps(url);
-    else
+    else if(reghttp.test(url))
         imgDownload = loadByHttp(url);
+    else {
+        url = `http:${url}`;
+        imgDownload = loadByHttp(url);
+    }
 
     var downloadSrc = `${path.dirname(dir)}/${dir}`;
 
@@ -18,7 +25,7 @@ const imgDownloader = (url, dir) => {
             fs.mkdirSync(downloadSrc);
         }
         let imgStr = path.basename(url);
-        
+
         fs.writeFile(`${downloadSrc}/${imgStr}`, img, 'binary', err => {
             if (err) {
                 console.log(`图片保存失败${url}`);

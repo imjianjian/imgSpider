@@ -23,8 +23,12 @@ const finished = () => {
     return finished;
 };
 
+const getNext = () =>{
+    return Array.from(unfinishedUrls)[0];
+};
+
 const urlFormat = (baseUrl,url) =>{
-    var urlReg = /^((http:\/\/)|(https:\/\/))?([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}/;
+    var urlReg = /^((http:\/\/)|(https:\/\/))?([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}/;
     return urlReg.test(url)?url:baseUrl+url;
 };
 
@@ -34,5 +38,6 @@ module.exports = {
     selectUrl,
     unfinished,
     finished,
+    getNext,
     urlFormat
 };
